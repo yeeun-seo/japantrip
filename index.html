@@ -6,6 +6,32 @@
 <title>교토 오사카 여행</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAcAvcyEhvIc6WxXw3eUsme2iNI0lbgMzg",
+    authDomain: "japan-47e61.firebaseapp.com",
+    databaseURL: "https://japan-47e61-default-rtdb.firebaseio.com",
+    projectId: "japan-47e61",
+    storageBucket: "japan-47e61.firebasestorage.app",
+    messagingSenderId: "1036282349103",
+    appId: "1:1036282349103:web:1a93acbe5bbd279553e8da"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // ── Firebase 읽기/쓰기 헬퍼 ──────────────────────────
+  window.fbSet = (path, value) => set(ref(db, path), value);
+  window.fbGet = (path) => get(ref(db, path)).then(s => s.exists() ? s.val() : null);
+  window.fbListen = (path, cb) => onValue(ref(db, path), s => cb(s.exists() ? s.val() : null));
+  window.firebaseReady = true;
+  document.dispatchEvent(new Event('firebaseReady'));
+</script>
+
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -902,94 +928,134 @@ table.ttbl td:first-child{font-weight:500;color:var(--tp)}
 </style>
 
 <script>
-// 현재 선택된 사람
 let currentPerson = localStorage.getItem('trip_person') || '';
+let saveNoteTimer = null;
 
+// ── 탭 전환 ──────────────────────────────────────────
+function showTab(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+function toggleExpand(h) {
+  const b = h.nextElementSibling;
+  const a = h.querySelector('.arr');
+  b.classList.toggle('open');
+  a.classList.toggle('open');
+}
+
+// ── 사람 선택 ─────────────────────────────────────────
 function selectPerson(name) {
   currentPerson = name;
   localStorage.setItem('trip_person', name);
   document.querySelectorAll('.person-btn').forEach(b => b.classList.remove('active'));
   const btn = document.getElementById('btn-' + name);
   if (btn) btn.classList.add('active');
-  document.getElementById('person-notice').textContent = name + '의 체크리스트 ✓ (사이트 닫아도 저장돼요)';
-  loadChecks();
-  loadPersonData();
+  document.getElementById('person-notice').textContent = name + '의 노트·체크리스트 ✓ 모든 기기에서 동기화돼요';
+  loadAllPersonData();
 }
 
-function getKey(item) {
-  return 'trip_check_' + currentPerson + '_' + item.dataset.key;
+// ── Firebase 경로 ─────────────────────────────────────
+function fbPath(type) {
+  return 'kyoto2026/' + currentPerson + '/' + type;
 }
 
+// ── 체크리스트 (기본) ────────────────────────────────
 function toggleCheck(item) {
   if (!currentPerson) {
-    document.getElementById('person-notice').textContent = '⚠️ 먼저 이름을 선택해주세요!';
-    document.getElementById('person-notice').style.color = 'var(--cd)';
+    showNotice('⚠️ 먼저 이름을 선택해주세요!');
     return;
   }
   item.classList.toggle('done');
-  localStorage.setItem(getKey(item), item.classList.contains('done') ? '1' : '0');
+  const key = item.dataset.key;
+  const checked = item.classList.contains('done');
+  // Firebase + localStorage 둘 다 저장
+  localStorage.setItem('chk_' + currentPerson + '_' + key, checked ? '1' : '0');
+  if (window.firebaseReady) {
+    window.fbSet(fbPath('checks/' + key), checked);
+  }
 }
 
-function loadChecks() {
+function loadChecks(data) {
   document.querySelectorAll('.ci[data-key]').forEach(item => {
-    const val = localStorage.getItem(getKey(item));
-    item.classList.toggle('done', val === '1');
+    const key = item.dataset.key;
+    // Firebase 데이터 우선, 없으면 localStorage
+    let val = data && data[key] !== undefined ? data[key] : (localStorage.getItem('chk_' + currentPerson + '_' + key) === '1');
+    item.classList.toggle('done', !!val);
   });
 }
 
-// 노트 저장
+// ── 자유 노트 ─────────────────────────────────────────
 function saveNote() {
   if (!currentPerson) return;
   const val = document.getElementById('personalNote').value;
   localStorage.setItem('trip_note_' + currentPerson, val);
+  // 타이핑 멈추고 800ms 후 Firebase 저장 (디바운스)
+  clearTimeout(saveNoteTimer);
+  saveNoteTimer = setTimeout(() => {
+    if (window.firebaseReady) {
+      window.fbSet(fbPath('note'), val).then(() => {
+        showNoteSaved('저장됨 ✓');
+      });
+    } else {
+      showNoteSaved('저장됨 ✓ (오프라인)');
+    }
+  }, 800);
+}
+
+function showNoteSaved(msg) {
   const el = document.getElementById('note-saved');
-  el.textContent = '저장됨 ✓';
-  setTimeout(() => { el.textContent = ''; }, 1500);
+  if (el) { el.textContent = msg; setTimeout(() => { el.textContent = ''; }, 2000); }
 }
 
-// 커스텀 아이템 추가
-function addCustomItem() {
-  if (!currentPerson) {
-    alert('먼저 이름을 선택해주세요!');
-    return;
-  }
-  const input = document.getElementById('customInput');
-  const text = input.value.trim();
-  if (!text) return;
-  const items = getCustomItems();
-  const id = 'custom_' + Date.now();
-  items.push({ id, text, checked: false });
-  saveCustomItems(items);
-  renderCustomItems();
-  input.value = '';
+function showNotice(msg) {
+  const el = document.getElementById('person-notice');
+  if (el) { el.textContent = msg; el.style.color = 'var(--cd)'; }
 }
 
+// ── 커스텀 체크리스트 ─────────────────────────────────
 function getCustomItems() {
-  if (!currentPerson) return [];
   const raw = localStorage.getItem('trip_custom_' + currentPerson);
   return raw ? JSON.parse(raw) : [];
 }
 
 function saveCustomItems(items) {
   localStorage.setItem('trip_custom_' + currentPerson, JSON.stringify(items));
+  if (window.firebaseReady) {
+    window.fbSet(fbPath('customItems'), items.length > 0 ? items : null);
+  }
+}
+
+function addCustomItem() {
+  if (!currentPerson) { alert('먼저 이름을 선택해주세요!'); return; }
+  const input = document.getElementById('customInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const items = getCustomItems();
+  items.push({ id: 'c' + Date.now(), text, checked: false });
+  saveCustomItems(items);
+  renderCustomItems(items);
+  input.value = '';
 }
 
 function toggleCustomItem(id) {
   const items = getCustomItems();
   const item = items.find(i => i.id === id);
-  if (item) { item.checked = !item.checked; saveCustomItems(items); renderCustomItems(); }
+  if (item) { item.checked = !item.checked; saveCustomItems(items); renderCustomItems(items); }
 }
 
 function deleteCustomItem(id) {
   const items = getCustomItems().filter(i => i.id !== id);
   saveCustomItems(items);
-  renderCustomItems();
+  renderCustomItems(items);
 }
 
-function renderCustomItems() {
+function renderCustomItems(items) {
   const list = document.getElementById('customList');
   if (!list) return;
-  const items = getCustomItems();
+  items = items || getCustomItems();
   if (items.length === 0) { list.innerHTML = ''; return; }
   list.innerHTML = items.map(item => `
     <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface2);border-radius:8px;${item.checked ? 'opacity:.45;' : ''}">
@@ -1000,43 +1066,65 @@ function renderCustomItems() {
       <span onclick="toggleCustomItem('${item.id}')"
         style="flex:1;font-size:13px;color:var(--ts);cursor:pointer;${item.checked ? 'text-decoration:line-through;' : ''}">${item.text}</span>
       <span onclick="deleteCustomItem('${item.id}')"
-        style="font-size:16px;color:var(--tm);cursor:pointer;padding:0 4px;line-height:1;">×</span>
+        style="font-size:18px;color:var(--tm);cursor:pointer;padding:0 4px;line-height:1;flex-shrink:0;">×</span>
     </div>
   `).join('');
 }
 
-function loadPersonData() {
-  // 노트 로드
-  const note = localStorage.getItem('trip_note_' + currentPerson) || '';
+// ── 전체 데이터 로드 (Firebase 우선) ──────────────────
+function loadAllPersonData() {
+  if (!currentPerson) return;
+
+  // 1) 로컬스토리지로 즉시 표시 (빠른 반응)
   const noteEl = document.getElementById('personalNote');
-  if (noteEl) noteEl.value = note;
-  // 커스텀 아이템 로드
+  if (noteEl) noteEl.value = localStorage.getItem('trip_note_' + currentPerson) || '';
+  loadChecks(null);
   renderCustomItems();
+
+  // 2) Firebase에서 최신 데이터로 덮어쓰기
+  if (!window.firebaseReady) {
+    document.addEventListener('firebaseReady', () => loadFromFirebase(), { once: true });
+    return;
+  }
+  loadFromFirebase();
 }
 
-// 초기화
+function loadFromFirebase() {
+  window.fbGet(fbPath('')).then(data => {
+    if (!data) return;
+
+    // 노트
+    if (data.note !== undefined) {
+      const noteEl = document.getElementById('personalNote');
+      if (noteEl) noteEl.value = data.note;
+      localStorage.setItem('trip_note_' + currentPerson, data.note);
+    }
+
+    // 체크
+    if (data.checks) {
+      loadChecks(data.checks);
+      Object.entries(data.checks).forEach(([k, v]) => {
+        localStorage.setItem('chk_' + currentPerson + '_' + k, v ? '1' : '0');
+      });
+    }
+
+    // 커스텀 아이템
+    if (data.customItems) {
+      localStorage.setItem('trip_custom_' + currentPerson, JSON.stringify(data.customItems));
+      renderCustomItems(data.customItems);
+    }
+  });
+}
+
+// ── 초기화 ────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   if (currentPerson) {
     const btn = document.getElementById('btn-' + currentPerson);
     if (btn) btn.classList.add('active');
-    document.getElementById('person-notice').textContent = currentPerson + '의 체크리스트 ✓ (사이트 닫아도 저장돼요)';
-    loadChecks();
-    loadPersonData();
+    document.getElementById('person-notice').textContent = currentPerson + '의 노트·체크리스트 ✓ 모든 기기에서 동기화돼요';
+    loadAllPersonData();
   }
 });
-
-function showTab(id,el){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  el.classList.add('active');
-}
-function toggleExpand(h){
-  const b=h.nextElementSibling;
-  const a=h.querySelector('.arr');
-  b.classList.toggle('open');
-  a.classList.toggle('open');
-}
 </script>
 </body>
 </html>
