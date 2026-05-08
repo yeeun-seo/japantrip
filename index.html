@@ -170,7 +170,7 @@ table.ttbl td:first-child{font-weight:500;color:var(--tp)}
   <div class="nav-tab" onclick="showTab('day2',this)">D2 · 아라시야마</div>
   <div class="nav-tab" onclick="showTab('day3',this)">D3 · 오사카</div>
   <div class="nav-tab" onclick="showTab('budget',this)">예산</div>
-  <div class="nav-tab" onclick="showTab('checklist',this)">준비물</div>
+  <div class="nav-tab" onclick="showTab('checklist',this)">준비물/노트</div>
 </nav>
 
 <!-- 개요 -->
@@ -807,6 +807,29 @@ table.ttbl td:first-child{font-weight:500;color:var(--tp)}
     <div id="person-notice" style="font-size:12px;color:var(--tm);margin-top:10px;">👆 이름을 선택하면 내 전용 체크리스트가 저장돼요</div>
   </div>
 
+  <!-- 자유 노트 -->
+  <div style="margin-bottom:24px;">
+    <div style="font-size:11px;color:var(--tm);margin-bottom:8px;letter-spacing:.08em;text-transform:uppercase;">✏️ 자유 노트</div>
+    <textarea id="personalNote"
+      placeholder="여행 메모, 챙길 것, 환율 계산 등 자유롭게 적어보세요..."
+      oninput="saveNote()"
+      style="width:100%;min-height:120px;padding:12px 14px;border-radius:10px;border:.5px solid var(--border-mid);background:var(--surface2);color:var(--tp);font-family:inherit;font-size:13px;line-height:1.6;resize:vertical;outline:none;"></textarea>
+    <div style="font-size:11px;color:var(--tm);margin-top:5px;text-align:right;" id="note-saved"></div>
+  </div>
+
+  <!-- 커스텀 체크리스트 -->
+  <div style="margin-bottom:24px;">
+    <div style="font-size:11px;color:var(--tm);margin-bottom:8px;letter-spacing:.08em;text-transform:uppercase;">➕ 내 항목 추가</div>
+    <div style="display:flex;gap:8px;">
+      <input id="customInput" type="text" placeholder="추가할 항목 입력..."
+        style="flex:1;padding:9px 12px;border-radius:8px;border:.5px solid var(--border-mid);background:var(--surface2);color:var(--tp);font-family:inherit;font-size:13px;outline:none;"
+        onkeydown="if(event.key==='Enter')addCustomItem()">
+      <button onclick="addCustomItem()"
+        style="padding:9px 16px;border-radius:8px;border:none;background:var(--tp);color:#fff;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;">추가</button>
+    </div>
+    <div id="customList" style="margin-top:10px;display:flex;flex-direction:column;gap:5px;"></div>
+  </div>
+
   <div class="cl-group">
     <div class="cl-title">필수 서류 · 결제</div>
     <div class="cl-grid">
@@ -890,6 +913,7 @@ function selectPerson(name) {
   if (btn) btn.classList.add('active');
   document.getElementById('person-notice').textContent = name + '의 체크리스트 ✓ (사이트 닫아도 저장돼요)';
   loadChecks();
+  loadPersonData();
 }
 
 function getKey(item) {
@@ -913,6 +937,83 @@ function loadChecks() {
   });
 }
 
+// 노트 저장
+function saveNote() {
+  if (!currentPerson) return;
+  const val = document.getElementById('personalNote').value;
+  localStorage.setItem('trip_note_' + currentPerson, val);
+  const el = document.getElementById('note-saved');
+  el.textContent = '저장됨 ✓';
+  setTimeout(() => { el.textContent = ''; }, 1500);
+}
+
+// 커스텀 아이템 추가
+function addCustomItem() {
+  if (!currentPerson) {
+    alert('먼저 이름을 선택해주세요!');
+    return;
+  }
+  const input = document.getElementById('customInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const items = getCustomItems();
+  const id = 'custom_' + Date.now();
+  items.push({ id, text, checked: false });
+  saveCustomItems(items);
+  renderCustomItems();
+  input.value = '';
+}
+
+function getCustomItems() {
+  if (!currentPerson) return [];
+  const raw = localStorage.getItem('trip_custom_' + currentPerson);
+  return raw ? JSON.parse(raw) : [];
+}
+
+function saveCustomItems(items) {
+  localStorage.setItem('trip_custom_' + currentPerson, JSON.stringify(items));
+}
+
+function toggleCustomItem(id) {
+  const items = getCustomItems();
+  const item = items.find(i => i.id === id);
+  if (item) { item.checked = !item.checked; saveCustomItems(items); renderCustomItems(); }
+}
+
+function deleteCustomItem(id) {
+  const items = getCustomItems().filter(i => i.id !== id);
+  saveCustomItems(items);
+  renderCustomItems();
+}
+
+function renderCustomItems() {
+  const list = document.getElementById('customList');
+  if (!list) return;
+  const items = getCustomItems();
+  if (items.length === 0) { list.innerHTML = ''; return; }
+  list.innerHTML = items.map(item => `
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface2);border-radius:8px;${item.checked ? 'opacity:.45;' : ''}">
+      <div onclick="toggleCustomItem('${item.id}')"
+        style="width:15px;height:15px;border-radius:4px;border:1.5px solid var(--border-mid);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;${item.checked ? 'background:#1D9E75;border-color:#1D9E75;' : ''}">
+        ${item.checked ? '<svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>' : ''}
+      </div>
+      <span onclick="toggleCustomItem('${item.id}')"
+        style="flex:1;font-size:13px;color:var(--ts);cursor:pointer;${item.checked ? 'text-decoration:line-through;' : ''}">${item.text}</span>
+      <span onclick="deleteCustomItem('${item.id}')"
+        style="font-size:16px;color:var(--tm);cursor:pointer;padding:0 4px;line-height:1;">×</span>
+    </div>
+  `).join('');
+}
+
+function loadPersonData() {
+  // 노트 로드
+  const note = localStorage.getItem('trip_note_' + currentPerson) || '';
+  const noteEl = document.getElementById('personalNote');
+  if (noteEl) noteEl.value = note;
+  // 커스텀 아이템 로드
+  renderCustomItems();
+}
+
 // 초기화
 window.addEventListener('DOMContentLoaded', () => {
   if (currentPerson) {
@@ -920,6 +1021,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (btn) btn.classList.add('active');
     document.getElementById('person-notice').textContent = currentPerson + '의 체크리스트 ✓ (사이트 닫아도 저장돼요)';
     loadChecks();
+    loadPersonData();
   }
 });
 
