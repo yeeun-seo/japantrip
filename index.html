@@ -201,16 +201,33 @@ table.ttbl td:first-child{font-weight:500;color:var(--tp)}
 
 <!-- 개요 -->
 <div class="section active" id="tab-overview">
+  <!-- 버전 정보 -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="background:var(--surface2);border:.5px solid var(--border-mid);border-radius:6px;padding:3px 9px;font-size:11px;font-weight:600;color:var(--tp);">v1.5</span>
+      <span style="font-size:11px;color:var(--tm);">2026.05.08 업데이트</span>
+    </div>
+    <span style="font-size:11px;color:var(--tm);">교토·오사카 2박 3일</span>
+  </div>
+
   <div class="hero">
     <div class="hero-tag">2026 · 05. 15 — 17 · 간사이</div>
     <div class="hero-title">교토 오사카 여행</div>
-    <div style="display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;">
-      <span style="width:36px;height:36px;border-radius:50%;background:var(--bb);color:var(--bt);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;">서영</span>
-      <span style="width:36px;height:36px;border-radius:50%;background:var(--tb);color:var(--tt);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;">사라</span>
-      <span style="width:36px;height:36px;border-radius:50%;background:var(--pb);color:var(--pt);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;">채린</span>
-      <span style="width:36px;height:36px;border-radius:50%;background:var(--ab);color:var(--at);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;">예은</span>
+    <div style="display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap;">
+      <div onclick="goToMyNote('서영')" title="내 준비물/노트 열기"
+        style="width:44px;height:44px;border-radius:50%;background:var(--bb);color:var(--bt);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.1);transition:transform .15s;"
+        onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">서영</div>
+      <div onclick="goToMyNote('사라')" title="내 준비물/노트 열기"
+        style="width:44px;height:44px;border-radius:50%;background:var(--tb);color:var(--tt);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.1);transition:transform .15s;"
+        onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">사라</div>
+      <div onclick="goToMyNote('채린')" title="내 준비물/노트 열기"
+        style="width:44px;height:44px;border-radius:50%;background:var(--pb);color:var(--pt);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.1);transition:transform .15s;"
+        onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">채린</div>
+      <div onclick="goToMyNote('예은')" title="내 준비물/노트 열기"
+        style="width:44px;height:44px;border-radius:50%;background:var(--ab);color:var(--at);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.1);transition:transform .15s;"
+        onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">예은</div>
     </div>
-    
+    <div style="font-size:11px;color:var(--tm);margin-top:10px;">👆 이름을 누르면 내 준비물·노트로 바로 이동해요</div>
   </div>
   <div class="stats-row">
     <div class="stat-card"><div class="stat-label">고정비 인당 (결제완료)</div><div class="stat-val">280,712원</div><div class="stat-sub">숙소+하루카</div></div>
@@ -932,6 +949,18 @@ let currentPerson = localStorage.getItem('trip_person') || '';
 let saveNoteTimer = null;
 
 // ── 탭 전환 ──────────────────────────────────────────
+function goToMyNote(name) {
+  // 해당 이름으로 선택 + 준비물/노트 탭으로 이동
+  selectPerson(name);
+  const tab = document.querySelector(".nav-tab:last-child");
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-checklist').classList.add('active');
+  tab.classList.add('active');
+  // 탭 스크롤 위로
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function showTab(id, el) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
