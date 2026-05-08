@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>교토 오사카 여행</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fafaf8;--surface:#fff;--surface2:#f4f3ef;
+  --border:rgba(0,0,0,.09);--border-mid:rgba(0,0,0,.15);
+  --tp:#1a1a18;--ts:#5a5a56;--tm:#9a9a95;
+  --cb:#FAECE7;--ct:#712B13;--cd:#D85A30;
+  --tb:#E1F5EE;--tt:#085041;--td:#1D9E75;
+  --pb:#EEEDFE;--pt:#3C3489;--pd:#7F77DD;
+  --ab:#FAEEDA;--at:#633806;--ad:#BA7517;
+  --gb:#F1EFE8;--gt:#444441;--gd:#888780;
+  --bb:#E6F1FB;--bt:#0C447C;--bd:#378ADD;
+  --grb:#EAF3DE;--grt:#27500A;
+}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tp);font-size:14px;line-height:1.6}
+.nav{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:.5px solid var(--border-mid);display:flex;padding:0 20px;overflow-x:auto}
+.nav-tab{padding:13px 14px;font-size:13px;font-weight:500;color:var(--tm);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+.nav-tab:hover{color:var(--ts)}
+.nav-tab.active{color:var(--tp);border-bottom-color:var(--tp)}
+.section{display:none;padding:24px 20px 48px;max-width:780px}
+.section.active{display:block}
+.hero{text-align:center;padding:28px 0 24px;border-bottom:.5px solid var(--border);margin-bottom:24px}
+.hero-tag{font-size:11px;letter-spacing:.18em;color:var(--tm);text-transform:uppercase;margin-bottom:10px}
+.hero-title{font-family:'Noto Serif KR',serif;font-size:26px;font-weight:600;line-height:1.4;margin-bottom:6px}
+.hero-sub{font-size:13px;color:var(--ts)}
+.members{display:flex;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.chip-m{font-size:12px;padding:4px 14px;border-radius:99px;background:var(--surface2);border:.5px solid var(--border-mid);color:var(--ts)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.stat-card{background:var(--surface2);border-radius:8px;padding:14px;text-align:center}
+.stat-label{font-size:11px;color:var(--tm);margin-bottom:4px}
+.stat-val{font-size:17px;font-weight:500}
+.stat-sub{font-size:11px;color:var(--tm);margin-top:3px}
+.sec-title{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:600;margin-bottom:12px}
+.divider{border:none;border-top:.5px solid var(--border);margin:22px 0}
+.notice{background:var(--ab);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--at);margin-bottom:14px;line-height:1.6}
+.notice-b{background:var(--bb);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--bt);margin-bottom:14px;line-height:1.6}
+/* expand */
+.exp{background:var(--surface);border:.5px solid var(--border-mid);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.exp-h{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;cursor:pointer}
+.exp-h:hover{background:var(--surface2)}
+.exp-t{font-size:13px;font-weight:500}
+.arr{font-size:10px;color:var(--tm);margin-left:8px;display:inline-block;transition:transform .2s}
+.arr.open{transform:rotate(180deg)}
+.exp-b{border-top:.5px solid var(--border);padding:10px 16px;display:none}
+.exp-b.open{display:block}
+.sub-row{display:flex;justify-content:space-between;font-size:12px;color:var(--ts);padding:5px 0;border-bottom:.5px solid var(--border)}
+.sub-row:last-child{border-bottom:none}
+.sub-lbl{color:var(--tm)}
+/* transport */
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.tcrd{background:var(--surface);border:.5px solid var(--border-mid);border-radius:12px;padding:14px}
+.tdir{font-size:11px;color:var(--tm);margin-bottom:8px}
+.trow{font-size:12px;color:var(--ts);padding:3px 0}
+.trow b{color:var(--tp);font-weight:500}
+table.ttbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+table.ttbl th{text-align:left;font-weight:500;color:var(--tm);font-size:11px;padding:5px 8px;border-bottom:.5px solid var(--border-mid)}
+table.ttbl td{padding:7px 8px;border-bottom:.5px solid var(--border);color:var(--ts)}
+table.ttbl tr:last-child td{border-bottom:none}
+table.ttbl td:first-child{font-weight:500;color:var(--tp)}
+.hl td{background:var(--ab);color:var(--at)!important}
+.hl td:first-child{color:var(--at)!important}
+/* timeline */
+.day-hdr{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.day-badge{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
+.d1 .day-badge{background:var(--bb);color:var(--bt)}
+.d2 .day-badge{background:var(--tb);color:var(--tt)}
+.d3 .day-badge{background:var(--ab);color:var(--at)}
+.day-title{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:600}
+.day-date{font-size:12px;color:var(--tm)}
+.leg{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.leg-i{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tm)}
+.leg-d{width:8px;height:8px;border-radius:50%;border:1.5px solid;flex-shrink:0}
+.col-labels{display:grid;grid-template-columns:1fr 170px;margin-bottom:6px;padding-left:28px}
+.col-lbl{font-size:10px;letter-spacing:.1em;color:var(--tm);text-transform:uppercase}
+.col-lbl.r{color:var(--pt);padding-left:12px}
+.tl-rows{position:relative;padding-left:20px}
+.tl-rows::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:.5px;background:var(--border-mid)}
+.tl-item{position:relative;display:grid;grid-template-columns:1fr 170px;gap:0;padding-bottom:16px;align-items:start}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{position:absolute;left:-14px;top:5px;width:8px;height:8px;border-radius:50%;border:1.5px solid}
+.dot-must{border-color:var(--cd);background:var(--cb)}
+.dot-food{border-color:var(--td);background:var(--tb)}
+.dot-move{border-color:var(--gd);background:var(--gb)}
+.tl-main{padding-right:10px}
+.tl-time{font-size:11px;color:var(--tm);margin-bottom:2px}
+.tl-place{font-size:13px;font-weight:500}
+.tl-desc{font-size:12px;color:var(--ts);margin-top:3px;line-height:1.5}
+.chips{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+.chip{font-size:11px;padding:2px 8px;border-radius:99px}
+.c-must{background:var(--cb);color:var(--ct)}
+.c-food{background:var(--tb);color:var(--tt)}
+.c-free{background:var(--grb);color:var(--grt)}
+.c-fee{background:var(--ab);color:var(--at)}
+.c-new{background:var(--pb);color:var(--pt)}
+.c-move{background:var(--gb);color:var(--gt)}
+.opt{padding-left:12px;border-left:.5px solid var(--pd)}
+.opt-e{border-left:.5px solid var(--border);padding-left:12px}
+.opt-lbl{font-size:10px;color:var(--pt);margin-bottom:2px;font-weight:500}
+.opt-name{font-size:12px;font-weight:500;color:var(--pt)}
+.opt-desc{font-size:11px;color:var(--tm);margin-top:2px;line-height:1.4}
+.opt-chips{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+/* budget */
+.bgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bcrd{background:var(--surface);border:.5px solid var(--border-mid);border-radius:12px;padding:14px 16px}
+.bcrd-t{font-size:11px;color:var(--tm);margin-bottom:10px}
+.brow{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:.5px solid var(--border)}
+.brow:last-child{border-bottom:none;font-weight:500;font-size:13px}
+.brow span:first-child{color:var(--ts)}
+/* fee table */
+.ftbl{width:100%;border-collapse:collapse;font-size:12px}
+.ftbl th{text-align:left;font-weight:500;color:var(--tm);font-size:11px;padding:6px 10px;border-bottom:.5px solid var(--border-mid)}
+.ftbl td{padding:8px 10px;border-bottom:.5px solid var(--border);color:var(--ts)}
+.ftbl tr:last-child td{border-bottom:none}
+.ftbl td:first-child{color:var(--tp);font-weight:500}
+.fee-free{color:#27500A!important}
+/* checklist */
+.cl-group{margin-bottom:18px}
+.cl-title{font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--tm);text-transform:uppercase;margin-bottom:8px;border-bottom:.5px solid var(--border);padding-bottom:5px}
+.cl-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.ci{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ts);padding:8px 10px;background:var(--surface2);border-radius:8px;cursor:pointer;user-select:none}
+.ci.done{opacity:.4;text-decoration:line-through}
+.cb2{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--border-mid);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.ci.done .cb2{background:#1D9E75;border-color:#1D9E75}
+.ci.done .cb2::after{content:'';width:8px;height:5px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px);display:block}
+.cbdg{font-size:10px;padding:1px 6px;border-radius:99px;margin-left:auto;flex-shrink:0}
+.bm{background:var(--cb);color:var(--ct)}
+.bo{background:var(--gb);color:var(--gt)}
+/* wish */
+.wgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.wi{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ts);padding:9px 12px;background:var(--surface2);border-radius:8px;cursor:pointer;user-select:none}
+.wi.done{opacity:.4;text-decoration:line-through}
+.wc{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--border-mid);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.wi.done .wc{background:#1D9E75;border-color:#1D9E75}
+.wi.done .wc::after{content:'';width:8px;height:5px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px);display:block}
+
+/* MAP */
+.map-section{margin-top:28px;border-top:.5px solid var(--border);padding-top:20px}
+.map-title{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:600;margin-bottom:12px}
+.map-wrap{border-radius:12px;overflow:hidden;border:.5px solid var(--border-mid);height:340px;position:relative}
+.map-wrap iframe{width:100%;height:100%;border:none}
+.route-steps{margin-top:14px}
+.route-step{display:flex;gap:10px;padding:8px 0;border-bottom:.5px solid var(--border);align-items:flex-start}
+.route-step:last-child{border-bottom:none}
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--ab);color:var(--at);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-body{flex:1}
+.step-place{font-size:13px;font-weight:500;color:var(--tp)}
+.step-how{font-size:11px;color:var(--tm);margin-top:2px}
+.step-arrow{font-size:12px;color:var(--gd);margin:0 4px}
+
+/* tips */
+.tip{display:flex;gap:12px;padding:9px 0;border-bottom:.5px solid var(--border);font-size:13px}
+.tip:last-child{border-bottom:none}
+.tip-l{min-width:80px;font-weight:500;flex-shrink:0}
+.tip-v{color:var(--ts);line-height:1.5}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-tab active" onclick="showTab('overview',this)">개요</div>
+  <div class="nav-tab" onclick="showTab('train',this)">기차편</div>
+  <div class="nav-tab" onclick="showTab('day1',this)">D1 · 교토도착</div>
+  <div class="nav-tab" onclick="showTab('day2',this)">D2 · 아라시야마</div>
+  <div class="nav-tab" onclick="showTab('day3',this)">D3 · 오사카</div>
+  <div class="nav-tab" onclick="showTab('budget',this)">예산</div>
+  <div class="nav-tab" onclick="showTab('checklist',this)">준비물</div>
+</nav>
+
+<!-- 개요 -->
+<div class="section active" id="tab-overview">
+  <div class="hero">
+    <div class="hero-tag">2026 · 05. 15 — 17 · 간사이</div>
+    <div class="hero-title">교토 오사카 여행</div>
+    <div style="display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;">
+      <span style="width:36px;height:36px;border-radius:50%;background:var(--bb);color:var(--bt);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;">서영</span>
+      <span style="width:36px;height:36px;border-radius:50%;background:var(--tb);color:var(--tt);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;">사라</span>
+      <span style="width:36px;height:36px;border-radius:50%;background:var(--pb);color:var(--pt);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;">채린</span>
+      <span style="width:36px;height:36px;border-radius:50%;background:var(--ab);color:var(--at);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;">예은</span>
+    </div>
+    
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">고정비 인당 (결제완료)</div><div class="stat-val">280,712원</div><div class="stat-sub">숙소+하루카</div></div>
+    <div class="stat-card"><div class="stat-label">공금 인당 각출</div><div class="stat-val">200,000원</div><div class="stat-sub">현지 모든 경비</div></div>
+    <div class="stat-card"><div class="stat-label">총 인당 예상</div><div class="stat-val">약 436,000원</div><div class="stat-sub">고정비 + 현지비</div></div>
+  </div>
+
+  <div class="sec-title">공금 20만원 내역 예상 (4인 합계 80만원)</div>
+  <div class="notice-b">현지 발생하는 모든 식비·간식·음료·입장료·교통비는 4인 공금으로 처리 — 인당 20만원 엔화 환전 후 공금 관리자에게 취합</div>
+
+  <div class="exp">
+    <div class="exp-h" onclick="toggleExpand(this)"><span class="exp-t">교통비</span><span><span style="font-size:13px;font-weight:500">약 45,000원/인</span><span class="arr">▼</span></span></div>
+    <div class="exp-b">
+      <div class="sub-row"><span class="sub-lbl">지하철 교토역→고조 (D1)</span><span>210엔 ≈ 2,100원</span></div>
+      <div class="sub-row"><span class="sub-lbl">버스 시내 (D1 왕복 2회)</span><span>460엔 ≈ 4,600원</span></div>
+      <div class="sub-row"><span class="sub-lbl">란덴 시조오미야→아라시야마 왕복 (D2)</span><span>500엔 ≈ 5,000원</span></div>
+      <div class="sub-row"><span class="sub-lbl">버스 아라시야마→금각사→숙소 (D2)</span><span>460엔 ≈ 4,600원</span></div>
+      <div class="sub-row"><span class="sub-lbl">JR 교토→오사카 신쾌속 (D3)</span><span>570엔 ≈ 5,700원</span></div>
+      <div class="sub-row"><span class="sub-lbl">난카이 라피트 난바→공항 (D3)</span><span>1,450엔 ≈ 14,500원</span></div>
+      <div class="sub-row" style="font-weight:500"><span>합계</span><span>약 36,500원</span></div>
+    </div>
+  </div>
+  <div class="exp">
+    <div class="exp-h" onclick="toggleExpand(this)"><span class="exp-t">관광지 입장료</span><span><span style="font-size:13px;font-weight:500">약 16,400원/인</span><span class="arr">▼</span></span></div>
+    <div class="exp-b">
+      <div class="sub-row"><span class="sub-lbl">기요미즈데라 (청수사)</span><span>400엔 ≈ 4,000원</span></div>
+      <div class="sub-row"><span class="sub-lbl">텐류지 정원</span><span>500엔 ≈ 5,000원</span></div>
+      <div class="sub-row"><span class="sub-lbl">금각사</span><span>500엔 ≈ 5,000원</span></div>
+      <div class="sub-row"><span class="sub-lbl">아라시야마 대나무숲</span><span>무료</span></div>
+      <div class="sub-row"><span class="sub-lbl">도게츠교</span><span>무료</span></div>
+      <div class="sub-row" style="font-weight:500"><span>합계</span><span>약 14,000원</span></div>
+    </div>
+  </div>
+  <div class="exp">
+    <div class="exp-h" onclick="toggleExpand(this)"><span class="exp-t">식비 · 카페 · 음료</span><span><span style="font-size:13px;font-weight:500">약 93,000원/인</span><span class="arr">▼</span></span></div>
+    <div class="exp-b">
+      <div class="sub-row"><span class="sub-lbl">D1 Babbi Gelato</span><span>600엔 ≈ 6,000원</span></div>
+      <div class="sub-row"><span class="sub-lbl">D1 저녁 — 오코노미야키 켄시로</span><span>1,700엔 ≈ 17,000원</span></div>
+      <div class="sub-row"><span class="sub-lbl">D2 응커피 % Arabica</span><span>700엔 ≈ 7,000원</span></div>
+      <div class="sub-row"><span class="sub-lbl">D2 점심 — 하나나 (타이쇼하나나)</span><span>1,500엔 ≈ 15,000원</span></div>
+      <div class="sub-row"><span class="sub-lbl">D3 카미나리스시 점심</span><span>2,500엔 ≈ 25,000원</span></div>
+      <div class="sub-row"><span class="sub-lbl">스타벅스 유바리 멜론 스무디 (D3)</span><span>800엔 ≈ 8,000원</span></div>
+      <div class="sub-row"><span class="sub-lbl">생맥주 · 음료 (D3)</span><span>600엔 ≈ 6,000원</span></div>
+      <div class="sub-row"><span class="sub-lbl">편의점 야식 2회 (D1·D2)</span><span>800엔 ≈ 8,000원</span></div>
+      <div class="sub-row" style="font-weight:500"><span>합계</span><span>약 92,000원</span></div>
+    </div>
+  </div>
+  <div class="exp">
+    <div class="exp-h" onclick="toggleExpand(this)"><span class="exp-t">공금 합계 및 여유분</span><span><span style="font-size:13px;font-weight:500;color:#712B13">약 142,500원/인 · 여유 약 57,500원</span><span class="arr">▼</span></span></div>
+    <div class="exp-b">
+      <div class="sub-row"><span class="sub-lbl">교통비</span><span>36,500원</span></div>
+      <div class="sub-row"><span class="sub-lbl">입장료</span><span>14,000원</span></div>
+      <div class="sub-row"><span class="sub-lbl">식비·카페·음료</span><span>92,000원</span></div>
+      <div class="sub-row" style="font-weight:500"><span>합계</span><span>142,500원</span></div>
+      <div class="sub-row" style="color:#27500A;font-weight:500"><span>공금 20만원으로 커버 · 여유</span><span>약 57,500원</span></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="sec-title">항공편</div>
+  <div class="notice">서영은 먼저 도착 후 공항 대기 — 사라·채린·예은 12:35 합류 후 하루카 탑승</div>
+  <div class="tgrid">
+    <div class="tcrd"><div class="tdir">출국 — 인천 → KIX</div>
+      <div class="trow">서영 · 피치항공 &nbsp;<b>07:30 → 09:20</b></div>
+      <div class="trow">사라·채린·예은 · 제주항공 &nbsp;<b>10:40 → 12:35</b></div>
+    </div>
+    <div class="tcrd"><div class="tdir">귀국 — KIX → 인천</div>
+      <div class="trow">서영 · 피치 &nbsp;<b>18:15 → 20:10</b></div>
+      <div class="trow">사라·예은 · 피치 &nbsp;<b>19:40 → 21:35</b></div>
+      <div class="trow">채린 · 제주항공 &nbsp;<b>19:55 → 21:55</b></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="sec-title">위시리스트</div>
+  <div class="wgrid">
+    <div class="wi" onclick="this.classList.toggle('done')"><div class="wc"></div>호텔 대욕탕(무료) 이용</div>
+    <div class="wi" onclick="this.classList.toggle('done')"><div class="wc"></div>편의점 야식 + 수다</div>
+    <div class="wi" onclick="this.classList.toggle('done')"><div class="wc"></div>아사히 or 오리온 생맥주</div>
+    <div class="wi" onclick="this.classList.toggle('done')"><div class="wc"></div>스타벅스 유바리 멜론</div>
+    <div class="wi" onclick="this.classList.toggle('done')"><div class="wc"></div>청수사 인생샷</div>
+    <div class="wi" onclick="this.classList.toggle('done')"><div class="wc"></div>란덴열차 탑승</div>
+    <div class="wi" onclick="this.classList.toggle('done')"><div class="wc"></div>아라시야마 족욕</div>
+    <div class="wi" onclick="this.classList.toggle('done')"><div class="wc"></div>후시미 이나리 도리이</div>
+    <div class="wi" onclick="this.classList.toggle('done')"><div class="wc"></div>아부리모찌 카자리야</div>
+    <div class="wi" onclick="this.classList.toggle('done')"><div class="wc"></div>글리코 간판 포토존</div>
+  </div>
+</div>
+
+<!-- 기차편 -->
+<div class="section" id="tab-train">
+  <div class="sec-title">D1 · 간사이공항 → 교토 (하루카 특급)</div>
+  <div class="notice">사라·채린·예은 12:35 도착 → 입국·수하물 약 30~40분 → <b>12:44 or 13:14 탑승 권장</b></div>
+  <div class="tcrd" style="margin-bottom:16px">
+    <div class="tdir">JR 하루카 특급 · 간사이공항 → 교토역 · 소요 약 80분 · 외국인 할인 1,800엔/인</div>
+    <table class="ttbl">
+      <tr><th>열차</th><th>공항 출발</th><th>교토 도착</th><th>비고</th></tr>
+      <tr><td>하루카 22호</td><td>12:14</td><td>13:34</td><td>입국 직후 → 빠듯</td></tr>
+      <tr class="hl"><td>하루카 24호</td><td>12:44</td><td>14:04</td><td>권장 ★</td></tr>
+      <tr class="hl"><td>하루카 26호</td><td>13:14</td><td>14:34</td><td>권장 ★</td></tr>
+      <tr><td>하루카 28호</td><td>13:44</td><td>15:04</td><td>여유 있을 때</td></tr>
+    </table>
+    <div style="font-size:11px;color:var(--tm);margin-top:8px">30분 간격 운행 · 자유석(5·6호차) or 지정석 · QR 발권기에서 여권+QR로 교환</div>
+  </div>
+
+  <div class="sec-title">D3 · 교토 → 오사카</div>
+  <div class="tcrd" style="margin-bottom:16px">
+    <div class="tdir">JR 신쾌속 · 교토역 → JR 오사카역 · 소요 약 28분 · 570엔 · IC카드 사용 가능</div>
+    <table class="ttbl">
+      <tr><th>교토 출발</th><th>오사카 도착</th><th>비고</th></tr>
+      <tr><td>09:00</td><td>09:28</td><td>체크아웃 직후</td></tr>
+      <tr class="hl"><td>09:15</td><td>09:43</td><td>권장 ★</td></tr>
+      <tr><td>09:30</td><td>09:58</td><td>여유 있을 때</td></tr>
+    </table>
+    <div style="font-size:11px;color:var(--tm);margin-top:8px">약 15분 간격 운행 · 교토역 5~8번 홈 · 오사카역 → 도톤보리는 지하철 나니와역 or 지하철 난바역 환승</div>
+  </div>
+
+  <div class="sec-title">D3 · 오사카(난바) → 간사이공항 귀국편</div>
+  <div class="notice">서영 18:15 탑승 기준 → 공항 17:30 도착 필요 → <b>16:00 ~ 16:30 난바 출발 권장</b></div>
+  <div class="tgrid">
+    <div class="tcrd">
+      <div class="tdir">추천 · 난카이 라피트 · 난바→공항 · 34분 · 1,450엔</div>
+      <table class="ttbl">
+        <tr><th>난바 출발</th><th>공항 도착</th></tr>
+        <tr><td>15:30</td><td>16:04</td></tr>
+        <tr class="hl"><td>16:00</td><td>16:34</td></tr>
+        <tr class="hl"><td>16:30</td><td>17:04</td></tr>
+        <tr><td>17:00</td><td>17:34</td></tr>
+      </table>
+      <div style="font-size:11px;color:var(--tm);margin-top:6px">30분 간격 · 지정석 · 난카이 난바역 출발</div>
+    </div>
+    <div class="tcrd">
+      <div class="tdir">대안 · 난카이 공항급행 · 난바→공항 · 45분 · 930엔</div>
+      <table class="ttbl">
+        <tr><th>난바 출발</th><th>공항 도착</th></tr>
+        <tr><td>15:40</td><td>16:25</td></tr>
+        <tr class="hl"><td>16:10</td><td>16:55</td></tr>
+        <tr class="hl"><td>16:40</td><td>17:25</td></tr>
+      </table>
+      <div style="font-size:11px;color:var(--tm);margin-top:6px">15~20분 간격 · 자유석 · 라피트보다 저렴</div>
+    </div>
+  </div>
+  <div class="notice" style="margin-top:12px">제주항공(채린) 탑승은 제2터미널 → 제1터미널 셔틀버스 약 11분 추가 소요. 출발 2시간 전 공항 도착 권장.</div>
+
+  <hr class="divider">
+  <div class="sec-title">교통 꿀팁</div>
+  <div class="tip"><div class="tip-l">ICOCA 카드</div><div class="tip-v">교토역 도착 즉시 발급 권장 (2,000엔 = 보증금 500+잔액 1,500) — 버스·지하철·JR 모두 사용 가능</div></div>
+  <div class="tip"><div class="tip-l">하루카 발권</div><div class="tip-v">간사이공항 내 전용 교환기 or JR 녹색 발권기에서 QR+여권으로 교환 · 교환 후 변경 불가</div></div>
+  <div class="tip"><div class="tip-l">교토 버스</div><div class="tip-v">1일권 700엔 추천 — 하루 3회 이상 탑승 시 이득 · 니넨자카·금각사 이동에 유용</div></div>
+  <div class="tip"><div class="tip-l">라피트 예약</div><div class="tip-v">KKday·클룩·마이리얼트립 사전 예약 시 현장보다 100~300엔 저렴 · 좌석 확정 장점</div></div>
+</div>
+
+<!-- D1 -->
+<div class="section" id="tab-day1">
+  <div class="day-hdr d1">
+    <div class="day-badge">D1</div>
+    <div><div class="day-title">교토 도착 · 기요미즈데라 · 가와라마치</div><div class="day-date">5월 15일 금요일</div></div>
+  </div>
+  <div class="leg">
+    <div class="leg-i"><div class="leg-d" style="border-color:#D85A30;background:#FAECE7"></div>필수</div>
+    <div class="leg-i"><div class="leg-d" style="border-color:#1D9E75;background:#E1F5EE"></div>식사</div>
+    <div class="leg-i"><div class="leg-d" style="border-color:#888780;background:#F1EFE8"></div>이동</div>
+    <div class="leg-i"><div class="leg-d" style="border-color:#7F77DD;background:#EEEDFE"></div>선택 (우측)</div>
+  </div>
+  <div class="col-labels"><div class="col-lbl">필수 일정</div><div class="col-lbl r">선택 · 추가</div></div>
+  <div class="tl-rows">
+
+    <div class="tl-item">
+      <div class="tl-dot dot-move"></div>
+      <div class="tl-main">
+        <div class="tl-time">12:35</div>
+        <div class="tl-place">간사이 국제공항 도착 · 합류</div>
+        <div class="tl-desc">입국 수속 → 하루카 26호 13:14 탑승 (교토역 14:34 도착)</div>
+        <div class="chips"><span class="chip c-fee">하루카 1,800엔/인</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-move"></div>
+      <div class="tl-main">
+        <div class="tl-time">14:34</div>
+        <div class="tl-place">교토역 → 호텔 체크인</div>
+        <div class="tl-desc">지하철 가라스마선 고조역 하차 도보 5분 · 약 10분 소요</div>
+        <div class="chips"><span class="chip c-move">지하철 210엔</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-must"></div>
+      <div class="tl-main">
+        <div class="tl-time">15:30 — 17:00</div>
+        <div class="tl-place">호텔 → 기요미즈데라 (청수사)</div>
+        <div class="tl-desc">버스 100·206번 고조자카 하차 → 자완자카 도보 통과 → 기요미즈데라 입장</div>
+        <div class="chips"><span class="chip c-must">필수</span><span class="chip c-fee">버스 230엔 + 입장 400엔</span></div>
+      </div>
+      <div class="opt"><div class="opt-lbl">코스 정보</div><div class="opt-name">🕐 사람 적음 · 완만한 경사</div><div class="opt-desc">오후 도착이라 혼잡 적음 · 자완자카 돌계단 완만한 경사</div></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-must"></div>
+      <div class="tl-main">
+        <div class="tl-time">17:00 — 18:00</div>
+        <div class="tl-place">니넨자카 · 산넨자카 (걸어 내려오기)</div>
+        <div class="tl-desc">기요미즈데라에서 내려오며 석등 돌계단 골목 산책 · 인생샷 포인트</div>
+        <div class="chips"><span class="chip c-must">필수</span><span class="chip c-free">무료</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-move"></div>
+      <div class="tl-main">
+        <div class="tl-time">18:00</div>
+        <div class="tl-place">버스 → 가와라마치 이동</div>
+        <div class="tl-desc">산넨자카 → 버스 약 10분 → 가와라마치 하차</div>
+        <div class="chips"><span class="chip c-move">버스 230엔</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-must"></div>
+      <div class="tl-main">
+        <div class="tl-time">18:10 — 19:00</div>
+        <div class="tl-place">소우소우 (SOU·SOU) 쇼핑</div>
+        <div class="tl-desc">가와라마치 인근 교토 대표 전통 텍스타일 브랜드 · 지갑·가방·소품 등</div>
+        <div class="chips"><span class="chip c-must">필수</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-food"></div>
+      <div class="tl-main">
+        <div class="tl-time">19:00 — 19:30</div>
+        <div class="tl-place">Babbi Gelato</div>
+        <div class="tl-desc">가와라마치 인근 이탈리안 젤라토 · 쇼핑 후 디저트 타임 (공금)</div>
+        <div class="chips"><span class="chip c-food">공금</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-food"></div>
+      <div class="tl-main">
+        <div class="tl-time">19:30 — 21:00</div>
+        <div class="tl-place">오코노미야키 켄시로 (お好み焼き 健士朗)</div>
+        <div class="tl-desc">가와라마치 인근 오코노미야키 전문점 · 저녁 식사 (공금)</div>
+        <div class="chips"><span class="chip c-must">필수</span><span class="chip c-food">공금</span></div>
+      </div>
+      <div class="opt"><div class="opt-lbl">위치</div><div class="opt-name"><a href="https://maps.google.com/?q=34.9998582,135.7653253" target="_blank" style="color:var(--pt);text-decoration:none">&#128205; 구글맵에서 보기</a></div><div class="opt-desc">가와라마치 도보권 · Babbi Gelato 근처</div></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-move"></div>
+      <div class="tl-main">
+        <div class="tl-time">21:00~</div>
+        <div class="tl-place">숙소 복귀 · 편의점 야식 타임 (공금)</div>
+        <div class="tl-desc">버스 귀환 → 편의점 털기 + 수다</div>
+        <div class="chips"><span class="chip c-move">버스 230엔</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+  </div>
+
+  <div class="map-section">
+    <div class="map-title">D1 이동 동선</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      <a href="https://www.google.com/maps/dir/Keio+Prelia+Hotel+Kyoto/Kiyomizudera+Temple+Kyoto/Ninenzaka+Kyoto/35.9998582,135.7653253/data=!4m2!4m1!3e2" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:var(--bb);border-radius:8px;font-size:12px;font-weight:500;color:var(--bt);text-decoration:none">&#128205; 전체 경로 열기</a>
+      <a href="https://maps.google.com/?q=34.994666,135.784661" target="_blank" style="display:flex;align-items:center;justify-content:center;padding:10px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--ts);text-decoration:none">기요미즈데라</a>
+      <a href="https://maps.google.com/?q=Kawaramachi+Kyoto+SOU+SOU" target="_blank" style="display:flex;align-items:center;justify-content:center;padding:10px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--ts);text-decoration:none">소우소우</a>
+    </div>
+    <div class="route-steps">
+      <div class="route-step"><div class="step-num">1</div><div class="step-body"><div class="step-place">간사이공항 → 교토역 (하루카 26호)</div><div class="step-how">13:14 출발 → 14:34 도착 · 약 80분</div></div></div>
+      <div class="route-step"><div class="step-num">2</div><div class="step-body"><div class="step-place">교토역 → 호텔 체크인 → 고조자카 버스 이동</div><div class="step-how">지하철 고조역 하차 도보 5분 → 체크인 → 버스 100·206번 고조자카 하차 약 20분</div></div></div>
+      <div class="route-step"><div class="step-num">3</div><div class="step-body"><div class="step-place">자완자카 → 기요미즈데라 → 니넨자카 (도보)</div><div class="step-how">완만한 경사 · 사람 적은 오후 타이밍 · 내려오며 니넨자카·산넨자카</div></div></div>
+      <div class="route-step"><div class="step-num">4</div><div class="step-body"><div class="step-place">산넨자카 → 가와라마치 (버스)</div><div class="step-how">버스 약 10분 (230엔) → 소우소우 쇼핑 → Babbi 젤라토</div></div></div>
+      <div class="route-step"><div class="step-num">5</div><div class="step-body"><div class="step-place">오코노미야키 켄시로 저녁</div><div class="step-how">가와라마치 도보권 (34.9998582, 135.7653253)</div></div></div>
+      <div class="route-step"><div class="step-num">6</div><div class="step-body"><div class="step-place">가와라마치 → 숙소 복귀 (버스)</div><div class="step-how">버스 약 15분 (230엔) → 고조카라스마 하차</div></div></div>
+    </div>
+    <div style="background:var(--surface2);border-radius:8px;padding:10px 14px;font-size:11px;color:var(--tm);margin-top:10px;line-height:1.7">
+      총 이동 약 <b style="color:var(--tp)">6~8km</b> · 교통비 약 900엔 · 자완자카→기요미즈데라 오르막 <b style="color:var(--at)">편한 신발 필수</b>
+    </div>
+  </div>
+</div>
+
+<!-- D2 -->
+<div class="section" id="tab-day2">
+  <div class="day-hdr d2">
+    <div class="day-badge">D2</div>
+    <div><div class="day-title">아라시야마 · 대나무숲 · 금각사</div><div class="day-date">5월 16일 토요일</div></div>
+  </div>
+  <div class="leg">
+    <div class="leg-i"><div class="leg-d" style="border-color:#D85A30;background:#FAECE7"></div>필수</div>
+    <div class="leg-i"><div class="leg-d" style="border-color:#1D9E75;background:#E1F5EE"></div>식사</div>
+    <div class="leg-i"><div class="leg-d" style="border-color:#888780;background:#F1EFE8"></div>이동</div>
+    <div class="leg-i"><div class="leg-d" style="border-color:#7F77DD;background:#EEEDFE"></div>선택 (우측)</div>
+  </div>
+  <div class="col-labels"><div class="col-lbl">필수 일정</div><div class="col-lbl r">선택 · 추가</div></div>
+  <div class="tl-rows">
+
+    <div class="tl-item">
+      <div class="tl-dot dot-move"></div>
+      <div class="tl-main">
+        <div class="tl-time">08:00</div>
+        <div class="tl-place">숙소 → 란덴 시조오미야역 (도보 20분)</div>
+        <div class="tl-desc">게이오프렐리아 → 란덴 시조오미야역까지 도보 이동</div>
+        <div class="chips"><span class="chip c-move">도보 약 20분</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-move"></div>
+      <div class="tl-main">
+        <div class="tl-time">08:20</div>
+        <div class="tl-place">란덴 시조오미야 → 아라시야마역 (약 20분)</div>
+        <div class="tl-desc">란덴 아라시야마선 탑승 → 아라시야마역 하차</div>
+        <div class="chips"><span class="chip c-fee">250엔</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-must"></div>
+      <div class="tl-main">
+        <div class="tl-time">08:45 — 10:30</div>
+        <div class="tl-place">아라시야마 치쿠린 (대나무숲)</div>
+        <div class="tl-desc">아라시야마역 도보 5분 · 대나무숲 산책</div>
+        <div class="chips"><span class="chip c-must">필수</span><span class="chip c-free">무료</span></div>
+      </div>
+      <div class="opt">
+        <div class="opt-lbl">선택 · 먼저 들르기</div>
+        <div class="opt-name">족욕 노천탕</div>
+        <div class="opt-desc">아라시야마역 플랫폼 바로 옆 · 수건 포함 · 09:00~17:30</div>
+        <div class="opt-chips"><span class="chip c-fee">300엔</span></div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-must"></div>
+      <div class="tl-main">
+        <div class="tl-time">10:30 — 11:00</div>
+        <div class="tl-place">텐류지 (정원)</div>
+        <div class="tl-desc">대나무숲 도보 5분 · 소겐지 연못 정원 관람 · 08:30~17:00</div>
+        <div class="chips"><span class="chip c-must">필수</span><span class="chip c-fee">500엔</span></div>
+      </div>
+      <div class="opt"><div class="opt-lbl">위치</div><div class="opt-name"><a href="https://maps.google.com/?q=35.0158379,135.6737654" target="_blank" style="color:var(--pt);text-decoration:none">&#128205; 구글맵에서 보기</a></div><div class="opt-desc">35.0158379, 135.6737654</div></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-food"></div>
+      <div class="tl-main">
+        <div class="tl-time">11:00 — 11:30</div>
+        <div class="tl-place">응커피 (% Arabica Arashiyama)</div>
+        <div class="tl-desc">아라시야마 강변 뷰 카페 · 교토 대표 스페셜티 커피 (공금)</div>
+        <div class="chips"><span class="chip c-food">공금</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-must"></div>
+      <div class="tl-main">
+        <div class="tl-time">11:30 — 12:00</div>
+        <div class="tl-place">도게츠교 (渡月橋)</div>
+        <div class="tl-desc">아라시야마 상징 달맞이 다리 · 강변 산책 · 인생샷 포인트</div>
+        <div class="chips"><span class="chip c-must">필수</span><span class="chip c-free">무료</span></div>
+      </div>
+      <div class="opt"><div class="opt-lbl">위치</div><div class="opt-name"><a href="https://maps.google.com/?q=35.0128769,135.6777748" target="_blank" style="color:var(--pt);text-decoration:none">&#128205; 구글맵에서 보기</a></div><div class="opt-desc">35.0128769, 135.6777748</div></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-food"></div>
+      <div class="tl-main">
+        <div class="tl-time">12:00 — 13:00</div>
+        <div class="tl-place">점심 — 하나나 / 오차즈케 (공금)</div>
+        <div class="tl-desc">타이쇼 하나나 (大正花菜) · 아라시야마 강변 인근 · 도게츠교 도보 3분</div>
+        <div class="chips"><span class="chip c-must">필수</span><span class="chip c-food">공금</span></div>
+      </div>
+      <div class="opt"><div class="opt-lbl">위치</div><div class="opt-name"><a href="https://maps.google.com/?q=35.0180547,135.6765639" target="_blank" style="color:var(--pt);text-decoration:none">&#128205; 구글맵에서 보기</a></div><div class="opt-desc">35.0180547, 135.6765639</div></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-move"></div>
+      <div class="tl-main">
+        <div class="tl-time">13:00</div>
+        <div class="tl-place">아라시야마 → 금각사 이동</div>
+        <div class="tl-desc">란덴 아라시야마역 → 시조오미야역 → 버스 101·205번 → 금각사미치 하차 · 약 50분</div>
+        <div class="chips"><span class="chip c-move">란덴 250엔 + 버스 230엔</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-must"></div>
+      <div class="tl-main">
+        <div class="tl-time">14:00 — 15:30</div>
+        <div class="tl-place">금각사 (긴카쿠지)</div>
+        <div class="tl-desc">황금빛 누각 · 경내 산책 · ⚠️ 입장마감 16:30, 여유있게 방문</div>
+        <div class="chips"><span class="chip c-must">필수</span><span class="chip c-fee">500엔</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-move"></div>
+      <div class="tl-main">
+        <div class="tl-time">15:30</div>
+        <div class="tl-place">금각사 → 교토 시내 복귀 · 숙소</div>
+        <div class="tl-desc">버스 101·205번 → 고조카라스마 하차 약 30분 · 저녁은 숙소 인근 자유</div>
+        <div class="chips"><span class="chip c-move">버스 230엔</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-move"></div>
+      <div class="tl-main">
+        <div class="tl-time">저녁</div>
+        <div class="tl-place">숙소 · 호텔 대중탕 · 편의점 야식 (공금)</div>
+        <div class="tl-desc">호텔 온센 이용 후 편의점 야식 + 수다</div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+  </div>
+
+  <div class="map-section">
+    <div class="map-title">D2 이동 동선</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      <a href="https://www.google.com/maps/dir/Keio+Prelia+Hotel+Kyoto+Karasuma+Gojo/Arashiyama+Bamboo+Forest+Kyoto/Togetsukyo+Bridge+Kyoto/Kinkakuji+Kyoto/data=!4m2!4m1!3e2" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:var(--tb);border-radius:8px;font-size:12px;font-weight:500;color:var(--tt);text-decoration:none">&#128205; 전체 경로 열기</a>
+      <a href="https://maps.google.com/?q=35.016818,135.671301" target="_blank" style="display:flex;align-items:center;justify-content:center;padding:10px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--ts);text-decoration:none">아라시야마</a>
+      <a href="https://maps.google.com/?q=35.03937,135.729243" target="_blank" style="display:flex;align-items:center;justify-content:center;padding:10px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--ts);text-decoration:none">금각사</a>
+    </div>
+    <div class="route-steps">
+      <div class="route-step"><div class="step-num">1</div><div class="step-body"><div class="step-place">숙소 → 란덴 시조오미야역 (도보)</div><div class="step-how">약 20분 도보</div></div></div>
+      <div class="route-step"><div class="step-num">2</div><div class="step-body"><div class="step-place">란덴 → 아라시야마역</div><div class="step-how">란덴 아라시야마선 약 20분 (250엔)</div></div></div>
+      <div class="route-step"><div class="step-num">3</div><div class="step-body"><div class="step-place">족욕 → 치쿠린 → 텐류지 → 응커피 → 도게츠교 (도보)</div><div class="step-how">아라시야마 역 도보권 · 전 구간 도보 이동</div></div></div>
+      <div class="route-step"><div class="step-num">4</div><div class="step-body"><div class="step-place">하나나 점심 → 란덴 복귀 → 금각사</div><div class="step-how">란덴 (250엔) → 버스 101·205번 금각사미치 (230엔) · 약 50분</div></div></div>
+      <div class="route-step"><div class="step-num">5</div><div class="step-body"><div class="step-place">금각사 → 숙소 복귀</div><div class="step-how">버스 101·205번 고조카라스마 하차 약 30분 (230엔)</div></div></div>
+    </div>
+    <div style="background:var(--surface2);border-radius:8px;padding:10px 14px;font-size:11px;color:var(--tm);margin-top:10px;line-height:1.7">
+      아라시야마 구간 전부 도보권 · 교통비 약 960엔 · <b style="color:var(--at)">금각사 입장마감 16:30 주의!</b>
+    </div>
+  </div>
+</div>
+
+<!-- D3 -->
+<div class="section" id="tab-day3">
+  <div class="day-hdr d3">
+    <div class="day-badge">D3</div>
+    <div><div class="day-title">오사카 당일치기 · 귀국</div><div class="day-date">5월 17일 일요일</div></div>
+  </div>
+  <div class="leg">
+    <div class="leg-i"><div class="leg-d" style="border-color:#D85A30;background:#FAECE7"></div>필수</div>
+    <div class="leg-i"><div class="leg-d" style="border-color:#1D9E75;background:#E1F5EE"></div>식사</div>
+    <div class="leg-i"><div class="leg-d" style="border-color:#888780;background:#F1EFE8"></div>이동</div>
+    <div class="leg-i"><div class="leg-d" style="border-color:#7F77DD;background:#EEEDFE"></div>선택 (우측)</div>
+  </div>
+  <div class="col-labels"><div class="col-lbl">필수 일정</div><div class="col-lbl r">선택 · 추가</div></div>
+  <div class="tl-rows">
+
+    <div class="tl-item">
+      <div class="tl-dot dot-move"></div>
+      <div class="tl-main">
+        <div class="tl-time">09:00</div>
+        <div class="tl-place">체크아웃 → JR 신쾌속 → 오사카</div>
+        <div class="tl-desc">교토역→오사카역 약 28분 (570엔) → 지하철 or 도보 난바 이동</div>
+        <div class="chips"><span class="chip c-fee">570엔</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-food"></div>
+      <div class="tl-main">
+        <div class="tl-time">10:30 — 12:00</div>
+        <div class="tl-place">카미나리스시 점심 (공금)</div>
+        <div class="tl-desc">신선한 오사카 스시 · 웨이팅 앱 사전 등록 강력 권장</div>
+        <div class="chips"><span class="chip c-must">필수</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-must"></div>
+      <div class="tl-main">
+        <div class="tl-time">12:00 — 15:30</div>
+        <div class="tl-place">도톤보리 · 신사이바시 쇼핑</div>
+        <div class="tl-desc">돈키호테 · 글리코 간판 포토존 · 스타벅스 유바리 멜론 스무디 (공금) · 생맥주 (공금)</div>
+        <div class="chips"><span class="chip c-must">필수</span></div>
+      </div>
+      <div class="opt"><div class="opt-lbl">선택 · 이른 저녁 대안</div><div class="opt-name">스키야키</div><div class="opt-desc">도톤보리 인근 · 공항 이동 전 이른 저녁으로 선택 가능</div><div class="opt-chips"><span class="chip c-new">구글 핀</span></div></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-move"></div>
+      <div class="tl-main">
+        <div class="tl-time">15:30 — 16:00 출발</div>
+        <div class="tl-place">난바 → 난카이 라피트 → 간사이공항</div>
+        <div class="tl-desc">16:00 출발 → 16:34 도착 · 서영 18:15 탑승 90분 전 확보</div>
+        <div class="chips"><span class="chip c-fee">라피트 1,450엔</span></div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot dot-move"></div>
+      <div class="tl-main">
+        <div class="tl-time">18:15~</div>
+        <div class="tl-place">각자 탑승 · 해산</div>
+        <div class="tl-desc">서영 18:15 · 사라·예은 19:40 · 채린 19:55</div>
+      </div>
+      <div class="opt-e"></div>
+    </div>
+
+  </div>
+
+  <div class="map-section">
+    <div class="map-title">D3 이동 동선</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      <a href="https://www.google.com/maps/dir/Kyoto+Station/Kaminari+Sushi+Osaka/Dotonbori+Osaka/Namba+Nankai+Station+Osaka/data=!4m2!4m1!3e2" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:var(--ab);border-radius:8px;font-size:12px;font-weight:500;color:var(--at);text-decoration:none">&#128205; 전체 경로 열기</a>
+      <a href="https://maps.google.com/?q=34.667598,135.503516" target="_blank" style="display:flex;align-items:center;justify-content:center;padding:10px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--ts);text-decoration:none">카미나리스시</a>
+      <a href="https://maps.google.com/?q=34.668647,135.503098" target="_blank" style="display:flex;align-items:center;justify-content:center;padding:10px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--ts);text-decoration:none">도톤보리</a>
+    </div>
+    <div class="route-steps">
+      <div class="route-step"><div class="step-num">1</div><div class="step-body"><div class="step-place">교토 숙소 → 오사카 (JR 신쾌속)</div><div class="step-how">교토역→오사카역 약 28분 (570엔) → 도보 or 지하철 난바</div></div></div>
+      <div class="route-step"><div class="step-num">2</div><div class="step-body"><div class="step-place">난바 → 카미나리스시</div><div class="step-how">난바역 도보 약 3분 (센니치마에 1-9-20)</div></div></div>
+      <div class="route-step"><div class="step-num">3</div><div class="step-body"><div class="step-place">카미나리스시 → 도톤보리 → 신사이바시</div><div class="step-how">도보 5분 · 글리코 간판 → 돈키호테 → 신사이바시 도보 10분</div></div></div>
+      <div class="route-step"><div class="step-num">4</div><div class="step-body"><div class="step-place">도톤보리 → 난카이 난바역</div><div class="step-how">도보 약 10분 · 16:00 라피트 탑승 권장</div></div></div>
+      <div class="route-step"><div class="step-num">5</div><div class="step-body"><div class="step-place">난바 → 간사이 국제공항 (난카이 라피트)</div><div class="step-how">약 34분 (1,450엔) · 제주항공은 제2터미널 셔틀 +11분 추가</div></div></div>
+    </div>
+    <div style="background:var(--surface2);border-radius:8px;padding:10px 14px;font-size:11px;color:var(--tm);margin-top:10px;line-height:1.7">
+      도톤보리~신사이바시 <b style="color:var(--tp)">전부 도보권 반경 500m</b> · 교통비 약 570+1,450엔 · <b style="color:var(--at)">16:00 난바 출발 필수!</b>
+    </div>
+  </div>
+</div>
+
+<!-- 예산 -->
+<div class="section" id="tab-budget">
+  <div class="sec-title">고정 지출 — 결제 완료 (4인 합계)</div>
+  <div class="bgrid" style="margin-bottom:20px">
+    <div class="bcrd"><div class="bcrd-t">4인 합계</div>
+      <div class="brow"><span>게이오프렐리아 (2박)</span><span>1,040,846원</span></div>
+      <div class="brow"><span>하루카 특급 (편도 4인)</span><span>82,000원</span></div>
+      <div class="brow"><span>합계</span><span>1,122,846원</span></div>
+    </div>
+    <div class="bcrd"><div class="bcrd-t">인당 고정비</div>
+      <div class="brow"><span>숙박 (2박)</span><span>260,212원</span></div>
+      <div class="brow"><span>하루카 기차</span><span>20,500원</span></div>
+      <div class="brow"><span>인당 합계</span><span>280,712원</span></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="sec-title">현지 공금 (인당 20만원 엔화 · 4인 합계 80만원)</div>
+  <div class="bgrid" style="margin-bottom:16px">
+    <div class="bcrd"><div class="bcrd-t">지출 항목별 평균</div>
+      <div class="brow"><span>교통비 (3일)</span><span>36,500원</span></div>
+      <div class="brow"><span>입장료</span><span>14,000원</span></div>
+      <div class="brow"><span>식비·카페·음료</span><span>92,000원</span></div>
+      <div class="brow"><span>합계</span><span>142,500원</span></div>
+    </div>
+    <div class="bcrd"><div class="bcrd-t">공금 여유분</div>
+      <div class="brow"><span>인당 공금</span><span>200,000원</span></div>
+      <div class="brow"><span>예상 지출</span><span>142,500원</span></div>
+      <div class="brow"><span>여유분</span><span>약 57,500원</span></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="sec-title">관광지 입장료 — 성인 1인 기준 (검색 확인)</div>
+  <div class="bcrd">
+    <table class="ftbl">
+      <tr><th>장소</th><th>입장료</th><th>운영시간 · 비고</th></tr>
+      <tr><td>기요미즈데라 (청수사)</td><td>400엔</td><td>06:00~18:00 · 현금 only</td></tr>
+      <tr><td>아라시야마 족욕 노천탕</td><td>250엔</td><td>수건 포함 · 마감 17:30</td></tr>
+      <tr><td>아라시야마 대나무숲</td><td class="fee-free">무료</td><td>낮 방문 권장</td></tr>
+      <tr><td>란덴열차</td><td>250엔</td><td>아라시야마 ↔ 시내</td></tr>
+      <tr><td>텐류지 (정원만)</td><td>500엔</td><td>08:30~17:00</td></tr>
+      <tr><td>텐류지 (정원+본당)</td><td>800엔</td><td>선택사항</td></tr>
+      <tr><td>후시미 이나리 신사</td><td class="fee-free">무료</td><td>24시간</td></tr>
+      <tr><td>금각사 (긴카쿠지)</td><td>500엔</td><td>09:00~17:00 · 입장마감 16:30</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- 준비물 -->
+<div class="section" id="tab-checklist">
+  <div class="cl-group"><div class="cl-title">필수 서류 · 결제</div>
+    <div class="cl-grid">
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>여권 (유효기간 6개월+)<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>여권 사본 (분리 보관)<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>항공권 (e-티켓)<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>호텔 예약 확인서<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>엔화 현금 (공금 20만원)<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>신용/체크카드<span class="cbdg bm">필수</span></div>
+    </div>
+  </div>
+  <div class="cl-group"><div class="cl-title">통신 · 전자기기</div>
+    <div class="cl-grid">
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>로밍 or e-SIM 설정<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>휴대폰 충전기<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>멀티플러그 어댑터 (110V)<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>보조배터리<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>카메라<span class="cbdg bo">선택</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>이어폰<span class="cbdg bo">선택</span></div>
+    </div>
+  </div>
+  <div class="cl-group"><div class="cl-title">의류 · 신발</div>
+    <div class="cl-grid">
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>편한 운동화 (도보 多)<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>얇은 겉옷 (일교차 대비)<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>접이식 우산 (비 잦음)<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>속옷·양말 (3일치+)<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>족욕용 여분 양말<span class="cbdg bo">선택</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>슬리퍼 (숙소·대중탕)<span class="cbdg bo">선택</span></div>
+    </div>
+  </div>
+  <div class="cl-group"><div class="cl-title">세면 · 위생 · 뷰티</div>
+    <div class="cl-grid">
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>세면도구 (칫솔·치약)<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>자외선차단제<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>상비약 (지사제·진통제)<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>화장품 · 스킨케어<span class="cbdg bo">선택</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>손소독제<span class="cbdg bo">선택</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>개인 위생용품<span class="cbdg bo">선택</span></div>
+    </div>
+  </div>
+  <div class="cl-group"><div class="cl-title">여행 편의</div>
+    <div class="cl-grid">
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>여행용 파우치/가방<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>ICOCA 카드 (교토 도착 후)<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>구글지도 오프라인 저장<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>하루카 QR 티켓 저장<span class="cbdg bm">필수</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>쇼핑백 / 에코백<span class="cbdg bo">선택</span></div>
+      <div class="ci" onclick="this.classList.toggle('done')"><div class="cb2"></div>여행자보험 가입<span class="cbdg bo">선택</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(id,el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+}
+function toggleExpand(h){
+  const b=h.nextElementSibling;
+  const a=h.querySelector('.arr');
+  b.classList.toggle('open');
+  a.classList.toggle('open');
+}
+</script>
+</body>
+</html>
